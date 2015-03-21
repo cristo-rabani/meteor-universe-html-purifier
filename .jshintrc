@@ -1,0 +1,17 @@
+{
+  "bitwise": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "noempty": true,
+  "nonew": true,
+  "trailing": true,
+  "unused": true,
+  "undef": true,
+
+  "devel": true,
+  "node": true,
+  "loopfunc": true,
+  "sub": true,
+  "smarttabs": true
+}
