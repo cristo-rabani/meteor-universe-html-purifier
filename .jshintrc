@@ -1,17 +1,25 @@
 {
   "bitwise": true,
+  "curly": true,
   "eqeqeq": true,
+  "freeze": true,
   "immed": true,
-  "latedef": true,
+  "newcap": true,
+  "noarg": true,
   "noempty": true,
-  "nonew": true,
-  "trailing": true,
-  "unused": true,
+  "nonbsp": true,
+  "quotmark": true,
   "undef": true,
-
+  "unused": true,
+  "strict": true,
+  "trailing": true,
+  "maxcomplexity": 12,
+  "maxlen": 120,
+  "globalstrict": true,
   "devel": true,
   "node": true,
-  "loopfunc": true,
-  "sub": true,
-  "smarttabs": true
+  "browser": true,
+  "globals": {
+    "UniHTML": true
+  }
 }

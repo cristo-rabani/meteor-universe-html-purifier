@@ -1,14 +1,15 @@
 /*
  * HTML Parser By John Resig (ejohn.org)
- * Original code by Erik Arvidsson, Mozilla Public License
+ * Original code by Erik Arvidsson, Licensed under the Apache License, Version 2.0 or Mozilla Public License
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
- *
+
+ * added support of HTML5 by Krzysztof Różalski <cristo.rabani@gmail.com>
  */
 
 // Regular Expressions for parsing tags and attributes (modified attribute name matcher, to catch xml:lang)
-var startTag = /^<(\w+\:?\w*)((?:\s+[a-zA-Z_:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
-	endTag = /^<\/(\w+)[^>]*>/,
-	attr = /(\w+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+var startTag = /^<([\w-]+\:?\w*)((?:\s+[a-zA-Z_:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
+	endTag = /^<\/([\w-]+)[^>]*>/,
+	attr = /([\w-]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
 
 function makeMap(str){
 	var obj = {}, items = str.split(",");
@@ -17,14 +18,11 @@ function makeMap(str){
 	return obj;
 }
 
-// Empty Elements - HTML 4.01
-var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed");
+var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,isindex,keygen,link,meta,menuitem,source,track,param,embed,wbr");
 
-// Block Elements - HTML 4.01
-var block = makeMap("address,applet,blockquote,button,center,dd,del,dir,div,dl,dt,fieldset,form,frameset,hr,iframe,ins,isindex,li,map,menu,noframes,noscript,object,ol,p,pre,script,table,tbody,td,tfoot,th,thead,tr,ul");
+var block = makeMap("article,aside,address,applet,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,form,footer,frameset,hr,iframe,header,hgroup,ins,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,progress,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video");
 
-// Inline Elements - HTML 4.01
-var inline = makeMap("a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var");
+var inline = makeMap("a,abbr,acronym,applet,audio,b,basefont,bdo,big,br,button,cite,code,command,del,details,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,mark,meter,nav,object,q,s,samp,script,select,small,span,strike,strong,sub,summary,sup,textarea,tt,u,time,var");
 
 // Elements that you can, intentionally, leave open
 // (and which close themselves)
@@ -36,7 +34,7 @@ var fillAttrs = makeMap("checked,compact,declare,defer,disabled,ismap,multiple,n
 // Special Elements (can contain anything)
 var special = makeMap("script,style");
 
-var HTMLParser = function( html, handler ) {
+HTMLParser = function( html, handler ) {
 	var index, chars, match, stack = [], last = html;
 	stack.last = function(){
 		return this[ this.length - 1 ];
@@ -173,5 +171,3 @@ var HTMLParser = function( html, handler ) {
 	// Clean up any remaining tags
 	parseEndTag();
 };
-
-exports = module.exports = HTMLParser;
