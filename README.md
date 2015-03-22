@@ -56,7 +56,7 @@ Additionally you can pass settings as a second parameter:
 - tr
 
 All other elements will be stripped from the resulting HTML, although the inner text will be left intact.
-The script can be use with a Rich Text Editor, and purposefully puts very firm limits on what can be included in the resulting XHTML. Since it is based on the HTML5 parsing specification it is very robust when it comes to cleaning up tag soup.
+The script can be use with a Rich Text Editor, and purposefully puts very firm limits on what can be included in the resulting HTML. Since it is based on the HTML5 parsing specification it is very robust when it comes to cleaning up tag soup.
 
 ## Default allowed attributes
 
