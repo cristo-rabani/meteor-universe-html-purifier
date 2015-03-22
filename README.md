@@ -30,6 +30,7 @@ Additionally you can pass settings as a second parameter of method `UniHTML.puri
 - preferB_I - transform tags: `<strong>` to `<b>`, `<em>` to `<i>`
 - noHeaders - transform heading tags to `<p><strong>` (if preferB_I === true then will be `<b>` instead `<strong>`)
 - withoutTags - An array of skipped tags, (which were before added, including defaults).
+
 Warning: Parameter 'withoutTags' works only for global tags.
 You cannot skipped local table tags like example: `<tr>`, `<caption>`, `<td>`
 
