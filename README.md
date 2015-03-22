@@ -5,8 +5,9 @@ maintained by [Vazco](http://www.vazco.eu).
 
 > It works as standalone Meteor package, but you can get max out of it when using the whole system.
 
-Universe HTML Purifier provides a method to cleanup dirty html. It will take a string of dirty and badly formatted html, and return a pretty printed valid HTML string.
-We can configure behavior of purifying, like changes available attributes and additional available tags (not implemented yet).
+Universe HTML Purifier provides a method to cleanup dirty html and it can help you in protection against cross site scripting (XSS) attacks.
+It will take a string of dirty and badly formatted html, and return a pretty printed valid HTML string.
+We can configure behavior of purifying, such as: changes available attributes, additional allowed tags, formatting and transforming.
 The script can work on both sides (client/server). This package is suggested to use with content editable, rich editor or everywhere where the html must be taken from untrusted sources.
 
 The purifying is based on the [HTML5 specification](http://www.whatwg.org/specs/web-apps/current-work/#parsing), and implements a subset of the algorithm described there.
@@ -22,13 +23,15 @@ UniHTML.purify('<p><b>Some</b> Text</p>');
 ```
 ## Customize purifying
 
-Additionally you can pass settings as a second parameter:
+Additionally you can pass settings as a second parameter of method `UniHTML.purify`:
 
 - noFormatting - deactivation of pretty formatting
 - preferStrong_Em - transform tags: `<b>` to `<strong>`, `<i>` to `<em>`
 - preferB_I - transform tags: `<strong>` to `<b>`, `<em>` to `<i>`
 - noHeaders - transform heading tags to `<p><strong>` (if preferB_I === true then will be `<b>` instead `<strong>`)
-
+- withoutTags - An array of skipped tags, (which were before added, including defaults).
+Warning: Parameter 'withoutTags' works only for global tags.
+You cannot skipped local table tags like example: `<tr>`, `<caption>`, `<td>`
 
 ## Default allowed elements
 - b
@@ -39,24 +42,31 @@ Additionally you can pass settings as a second parameter:
 - ol
 - ul
 - li
+- h1-h7
 - p
+- span
 - pre
 - a
+- u
 - img
 - br
 - table
-- caption
-- col
-- colgroup
-- tbody
-- td
-- tfoot
-- th
-- thead
-- tr
+  + caption
+  + col
+  + colgroup
+  + tbody
+  + td
+  + tfoot
+  + th
+  + thead
+  + tr
 
-All other elements will be stripped from the resulting HTML, although the inner text will be left intact.
-The script can be use with a Rich Text Editor, and purposefully puts very firm limits on what can be included in the resulting HTML. Since it is based on the HTML5 parsing specification it is very robust when it comes to cleaning up tag soup.
+All not allowed elements will be stripped from the resulting HTML, although the inner text will be left intact.
+You can add additional tags using method `UniHTML.addNewAllowedTag(tagName, isSelfClosing)`,
+is very important to pass true as second argument if tag is self-closing.
+
+You can also skipped default allowed tags for current call purify,
+but only global tags (top level). It mean that you cannot skipped `<td>` or `<tr>` for `<table>`
 
 ## Default allowed attributes
 
@@ -77,6 +87,23 @@ UniHTML.setNewAllowedAttributes(attributesArray, tag);
 
 default value of tag parameter is 'all_elements'
 
+## Parser
+
+Additionally package provides simple html parser.
+To use it, you can just call method:
+
+```
+UniHTML.parse(html_string, {
+           // attributesOnTag is an Object like {name, value, escaped}
+      start: function(tagName, attributesOnTag, isSelfClosing), // open tag
+      end: function(tagName), // close
+      chars: function(text), // text between open and closing tag
+      comment: function(text) // text from comment
+});
+```
+
+Parse html5 string (including custom tags) and calls callback in the same order as tags in html string are present.
+( from root to leaf, and so on for each node)
 
 ## License
 

@@ -1,11 +1,13 @@
 var allowHeaders = true;
 var stack = [];
 var active_elements = [];
+var customTags = {};
 var root;
 var insertion_mode;
 var noFormatting;
 var preferB_I = false;
 var preferStrong_Em = false;
+var withoutTags;
 
 
 var scope_markers = {'td': true, 'th': true, 'caption': true};
@@ -182,7 +184,7 @@ Node.prototype = {
     }
 };
 
-function init() {
+function init(settings) {
     root = new Node('html');
     stack = [root];
     active_elements = [];
@@ -200,6 +202,22 @@ function init() {
         for (i in allowed_attributes[key]) {
             attr = allowed_attributes[key][i];
             allowed_attributes_as_hash[key][attr] = true;
+        }
+    }
+
+    noFormatting = !!settings.noFormatting;
+    preferStrong_Em = !!settings.preferStrong_Em;
+    preferB_I = !preferStrong_Em && !!settings.preferB_I;
+    allowHeaders = !settings.noHeaders;
+    withoutTags = {};
+
+    if(typeof settings.withoutTags === 'string' && settings.withoutTags){
+        settings.withoutTags = [settings.withoutTags];
+    }
+
+    if(settings.withoutTags && settings.withoutTags.length){
+        for (var i = settings.withoutTags.length -1 ; i >= 0; i--) {
+            withoutTags[settings.withoutTags[i]] = true;
         }
     }
 }
@@ -399,6 +417,9 @@ var InBody = {
     insertion_mode_start: function (tagName, attrs) {
         var node;
         tagName = tagName.toLowerCase();
+        if (withoutTags[tagName]) {
+            return;
+        }
         if (preferStrong_Em) {
             switch (tagName) {
                 case 'b':
@@ -472,8 +493,6 @@ var InBody = {
             case 'i':
             case 'u':
             case 'span':
-            case 'var':
-            case 'sup':
                 reconstruct_the_active_formatting_elements();
                 node = insert_html_element_for(tagName, attrs);
                 active_elements.push(node);
@@ -492,103 +511,134 @@ var InBody = {
                 stack.pop();
                 return;
         }
+        if (customTags[tagName]) {
+            if (selfClosing[tagName]) {
+                reconstruct_the_active_formatting_elements();
+                insert_html_element_for(tagName, attrs);
+                stack.pop();
+                return;
+            } else {
+                reconstruct_the_active_formatting_elements();
+                node = insert_html_element_for(tagName, attrs);
+                active_elements.push(node);
+                return;
+            }
+        }
     },
 
     insertion_mode_end: function (tagName) {
-        if (typeof(tagName) === undefined) {
+        if (typeof tagName === 'undefined') {
             return;
         }
         var node;
         tagName = tagName.toLowerCase();
-        if (preferStrong_Em) {
-            switch (tagName) {
-                case 'b':
-                    end('strong');
-                    return;
-                case 'i':
-                    end('em');
-                    return;
-            }
-        } else if (preferB_I) {
-            switch (tagName) {
-                case 'strong':
-                    end('b');
-                    return;
-                case 'em':
-                    end('i');
-                    return;
-            }
-        }
-        switch (tagName) {
-            case 'h1':
-            case 'h2':
-            case 'h3':
-            case 'h4':
-            case 'h5':
-            case 'h6':
-            case 'h7':
-                if (!allowHeaders) {
-                    if (preferB_I) {
-                        end('b');
-                    } else {
+        if (!withoutTags[tagName]) {
+            if (preferStrong_Em) {
+                switch (tagName) {
+                    case 'b':
                         end('strong');
+                        return;
+                    case 'i':
+                        end('em');
+                        return;
+                }
+            } else if (preferB_I) {
+                switch (tagName) {
+                    case 'strong':
+                        end('b');
+                        return;
+                    case 'em':
+                        end('i');
+                        return;
+                }
+            }
+            switch (tagName) {
+                case 'h1':
+                case 'h2':
+                case 'h3':
+                case 'h4':
+                case 'h5':
+                case 'h6':
+                case 'h7':
+                    if (!allowHeaders) {
+                        if (preferB_I) {
+                            end('b');
+                        } else {
+                            end('strong');
+                        }
+                        end('p');
+                        return;
                     }
-                    end('p');
+                    if (in_scope(tagName)) {
+                        generate_implied_end_tags();
+                        do {
+                            node = stack.pop();
+                        } while (node.name !== tagName);
+                    }
                     return;
-                }
-                if (in_scope(tagName)) {
-                    generate_implied_end_tags();
-                    do {
+                case 'blockquote':
+                case 'ol':
+                case 'ul':
+                case 'pre': // Techically PRE shouldn't be in this groups, since newlines should be ignored after a pre tag
+                    if (in_scope(tagName)) {
+                        generate_implied_end_tags();
+                    }
+                    if (in_scope(tagName)) {
+                        do {
+                            node = stack.pop();
+                        } while (node.name !== tagName);
+                    }
+                    return;
+                case 'p':
+                    if (in_scope(tagName)) {
+                        generate_implied_end_tags(tagName);
+                    }
+                    var no_p_in_scope = true;
+                    while (in_scope(tagName)) {
+                        no_p_in_scope = false;
                         node = stack.pop();
-                    } while (node.name !== tagName);
-                }
-                return;
-            case 'blockquote':
-            case 'ol':
-            case 'ul':
-            case 'pre': // Techically PRE shouldn't be in this groups, since newlines should be ignored after a pre tag
-                if (in_scope(tagName)) {
-                    generate_implied_end_tags();
-                }
-                if (in_scope(tagName)) {
+                    }
+                    if (no_p_in_scope) {
+                        start('p', [], false);
+                        end('p');
+                    }
+                    return;
+                case 'li':
+                    if (in_scope(tagName)) {
+                        generate_implied_end_tags(tagName);
+                    }
+                    if (in_scope(tagName)) {
+                        do {
+                            node = stack.pop();
+                        } while (node.name !== tagName);
+                    }
+                    return;
+                case 'a':
+                case 'i':
+                case 'em':
+                case 'strong':
+                case 'b':
+                case 'u':
+                case 'span':
+                    for (var i = active_elements.length; i > 0; i--) {
+                        if (active_elements[i - 1].name === tagName) {
+                            node = active_elements[i - 1];
+                            break;
+                        }
+                    }
+                    if (typeof(node) === 'undefined' || !in_array(stack, node)) {
+                        return;
+                    }
+                    // Step 2 from the algorithm in the HTML5 spec will never be necessary with the tags we allow
+                    var popped_node;
                     do {
-                        node = stack.pop();
-                    } while (node.name !== tagName);
-                }
-                return;
-            case 'p':
-                if (in_scope(tagName)) {
-                    generate_implied_end_tags(tagName);
-                }
-                var no_p_in_scope = true;
-                while (in_scope(tagName)) {
-                    no_p_in_scope = false;
-                    node = stack.pop();
-                }
-                if (no_p_in_scope) {
-                    start('p', [], false);
-                    end('p');
-                }
-                return;
-            case 'li':
-                if (in_scope(tagName)) {
-                    generate_implied_end_tags(tagName);
-                }
-                if (in_scope(tagName)) {
-                    do {
-                        node = stack.pop();
-                    } while (node.name !== tagName);
-                }
-                return;
-            case 'a':
-            case 'i':
-            case 'em':
-            case 'strong':
-            case 'b':
-            case 'u':
-            case 'span':
-            case 'var':
-            case 'sup':
+                        popped_node = stack.pop();
+                    } while (popped_node !== node);
+                    active_elements.splice(i - 1, 1);
+                    return;
+
+            }
+            if (customTags[tagName] && !selfClosing[tagName]) {
                 for (var i = active_elements.length; i > 0; i--) {
                     if (active_elements[i - 1].name === tagName) {
                         node = active_elements[i - 1];
@@ -605,14 +655,14 @@ var InBody = {
                 } while (popped_node !== node);
                 active_elements.splice(i - 1, 1);
                 return;
-            default:
-                node = current_node();
-                if (node.name === tagName) {
-                    generate_implied_end_tags();
-                    while (stack.length > 0 && node !== current_node()) {
-                        stack.pop();
-                    }
-                }
+            }
+        }
+        node = current_node();
+        if (node.name === tagName) {
+            generate_implied_end_tags();
+            while (stack.length > 0 && node !== current_node()) {
+                stack.pop();
+            }
         }
     }
 };
@@ -980,20 +1030,36 @@ var InCell = {
 };
 
 UniHTML = {
-    parser: HTMLParser,
-    purify: function (text, settings) {
+    /**
+     * Parse html string and calls callback in the same order as tags in html string are present.
+     * Method supports html5, including custom tags.
+     * @param html
+     * @param handler {Object} object of callbacks for example:
+     * {
+     *          // attributesOnTag is an Object like {name, value, escaped}
+     *      start: function(tagName, attributesOnTag, isSelfClosing), // open tag
+     *      end: function(tagName), // close
+     *      chars: function(text), // text between open and closing tag
+     *      comment: function(text) // text from comment
+     * }
+     * @throws Parse Error
+     */
+    parse: HTMLParser,
+    /**
+     * Cleanup dirty html from unknown/untrusted tags
+     * @param html {string} html string to purify
+     * @param settings {Object} noFormatting, preferStrong_Em, preferB_I, noHeaders, withoutTags
+     * @returns {HTML|string|void}
+     */
+    purify: function (html, settings) {
         if (typeof settings !== 'object') {
             settings = {};
         }
-        init();
+        init(settings);
         insertion_mode = InBody;
-        noFormatting = !!settings.noFormatting;
-        preferStrong_Em = !!settings.preferStrong_Em;
-        preferB_I = !preferStrong_Em && !!settings.preferB_I;
-        allowHeaders = !settings.noHeaders;
 
         try {
-            HTMLParser(text, {
+            HTMLParser(html, {
                 start: start,
                 end: end,
                 chars: chars
@@ -1009,18 +1075,29 @@ UniHTML = {
     /**
      * Sets new allowed attributes for one or all tags
      * @param attributesArray {Array} Array of names of attributes
-     * @param tag {String@='all_elements'}
+     * @param tag {string=} [tag=all_elements]
      */
-    setNewAllowedAttributes: function(attributesArray, tag){
-        if(!tag){
+    setNewAllowedAttributes: function (attributesArray, tag) {
+        if (!tag) {
             tag = 'all_elements';
         }
-        if(!attributesArray){
+        if (!attributesArray) {
             attributesArray = [];
         }
-        if(typeof attributesArray === 'string') {
+        if (typeof attributesArray === 'string') {
             attributesArray = [attributesArray];
         }
         allowed_attributes[tag] = attributesArray;
+    },
+    /**
+     * Adds new allowed html tag
+     * @param tagName {string}
+     * @param isSelfClosing {boolean=} a void tags like: img, hr, area
+     */
+    addNewAllowedTag: function (tagName, isSelfClosing) {
+        customTags[tagName] = true;
+        if (isSelfClosing) {
+            selfClosing[tagName] = true;
+        }
     }
 };
