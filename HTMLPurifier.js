@@ -1100,7 +1100,7 @@ UniHTML = {
             selfClosing[tagName] = true;
         }
     },
-    
+
     TextNode: TextNode,
     Node: Node
 };

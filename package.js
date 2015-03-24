@@ -1,5 +1,5 @@
 Package.describe({
-    summary: 'Package to sanitize HTML from unknown/untrusted tags. It can help you in protection against XSS. Additionally It provides simple HTML5 parser',
+    summary: 'Package to sanitize HTML from untrusted tags. Can help you in protection against XSS. + HTML5 parser',
     name: 'vazco:universe-html-purifier',
     version: '1.0.3',
     git: 'https://github.com/cristo-rabani/meteor-universe-html-purifier.git'
