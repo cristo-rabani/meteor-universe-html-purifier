@@ -13,6 +13,7 @@ The script can work on both sides (client/server). This package is suggested to 
 The purifying is based on the [HTML5 specification](http://www.whatwg.org/specs/web-apps/current-work/#parsing), and implements a subset of the algorithm described there.
 Only a limited set of the permitted HTML5 elements and attributes are permitted, and all other tags/attributes will simply be gone in the resulting HTML.
 
+Additionally package provides html parser.
 
 # Usage
 
@@ -90,7 +91,7 @@ default value of tag parameter is 'all_elements'
 
 ## Parser
 
-Additionally package provides simple html parser.
+Package provides simple html parser.
 To use it, you can just call method:
 
 ```
@@ -117,7 +118,8 @@ Released under triple licensed using Apache Software License 2.0, Mozilla Public
 http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
 
 Written based on the wonderful:
-- node-xhtml-purifier, which is copyright © 2014 [Charlie Stigler](http://charliestigler.com) with [Zaption](http://www.zaption.com) and released under the MIT license.
 - javascript-xhtml-purifier, which is copyright © 2008 [Mathias Biilmann Christensen](http://mathias-biilmann.net) / [Domestika INTERNET S.L.](http://domestika.com), released under the MIT license
+and partly:
+- node-xhtml-purifier, which is copyright © 2014 [Charlie Stigler](http://charliestigler.com) with [Zaption](http://www.zaption.com) and released under the MIT license.
 
 
