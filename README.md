@@ -119,6 +119,7 @@ http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
 
 Written based on the wonderful:
 - javascript-xhtml-purifier, which is copyright © 2008 [Mathias Biilmann Christensen](http://mathias-biilmann.net) / [Domestika INTERNET S.L.](http://domestika.com), released under the MIT license
+
 and partly:
 - node-xhtml-purifier, which is copyright © 2014 [Charlie Stigler](http://charliestigler.com) with [Zaption](http://www.zaption.com) and released under the MIT license.
 

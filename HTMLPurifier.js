@@ -1099,5 +1099,8 @@ UniHTML = {
         if (isSelfClosing) {
             selfClosing[tagName] = true;
         }
-    }
+    },
+    
+    TextNode: TextNode,
+    Node: Node
 };
