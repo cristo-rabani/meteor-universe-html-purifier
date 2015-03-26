@@ -3,7 +3,8 @@ Universe HTML Purifier
 > This package is part of Universe, a framework based on [Meteor platform](http://meteor.com)
 maintained by [Vazco](http://www.vazco.eu).
 
-> It works as standalone Meteor package, but you can get max out of it when using the whole system.
+> **It works as standalone Meteor package**, but you can get much more features when using the whole system.
+
 
 Universe HTML Purifier provides a method to cleanup dirty html and it can help you in protection against cross site scripting (XSS) attacks.
 It will take a string of dirty and badly formatted html, and return a pretty printed valid HTML string.
