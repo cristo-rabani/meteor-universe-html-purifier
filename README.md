@@ -16,6 +16,10 @@ Only a limited set of the permitted HTML5 elements and attributes are permitted,
 
 Additionally package provides html parser.
 
+## Installation
+
+`$ meteor add vazco:universe-html-purifier`
+
 # Usage
 
 ## Basic
