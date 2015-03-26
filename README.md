@@ -18,7 +18,9 @@ Additionally package provides html parser.
 
 ## Installation
 
-`$ meteor add vazco:universe-html-purifier`
+```
+$ meteor add vazco:universe-html-purifier
+```
 
 # Usage
 
