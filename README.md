@@ -150,3 +150,5 @@ and partly:
 - node-xhtml-purifier, which is copyright © 2014 [Charlie Stigler](http://charliestigler.com) with [Zaption](http://www.zaption.com) and released under the MIT license.
 
 
+#### Additional users external materials
+- [Example how to purify to whitelist](https://gist.github.com/dstollie/ef8131cbfac2600441a0)
