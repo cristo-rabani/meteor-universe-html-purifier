@@ -27,8 +27,17 @@ $ meteor add vazco:universe-html-purifier
 ## Basic
 
 ```javascript
-UniHTML.purify('<p><b>Some</b> Text</p>');
+UniHTML.purify('<p><b>Some</b><script> alert(); </script> Text</p>');
 ```
+
+output:
+
+```
+<p>
+    <b>Some</b> alert();  Text
+</p>
+```
+
 ## Customize purifying
 
 Additionally you can pass settings as a second parameter of method `UniHTML.purify`:
