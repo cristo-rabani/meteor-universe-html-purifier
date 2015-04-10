@@ -5,6 +5,7 @@ var htmlPurifier = function(settings){
     var stack = [];
     var active_elements = [];
     var customTags = {};
+    var noTextManhandle = false;
     var root;
     var insertion_mode;
     var noFormatting;
@@ -52,7 +53,7 @@ var htmlPurifier = function(settings){
     };
 
     var TextNode = function (text) {
-        this.text = text.replace(/\s+/g, ' ');
+        this.text = noTextManhandle ? text : text.replace(/\s+/g, ' ');
     };
 
     TextNode.prototype = {
@@ -201,7 +202,6 @@ var htmlPurifier = function(settings){
             settings.insertion_mode = 'InBody';
         };
         insertion_mode = modes[settings.insertion_mode];
-
         _.extend(allowed_attributes, settings.allowed_attributes);
         _.extend(customTags, settings.customTags);
         _.extend(selfClosing, settings.selfClosingTags);
@@ -229,6 +229,10 @@ var htmlPurifier = function(settings){
         }
 
         noFormatting = !!settings.noFormatting;
+        if(settings.noTextManhandle){
+            noTextManhandle = true;
+            noFormatting = true;
+        }
         preferStrong_Em = !!settings.preferStrong_Em;
         preferB_I = !preferStrong_Em && !!settings.preferB_I;
         allowHeaders = !settings.noHeaders;
@@ -311,7 +315,7 @@ var htmlPurifier = function(settings){
     }
 
     function trim_to_1_space(str) {
-        return str.replace(/^\s+/, ' ').replace(/\s+$/, ' ');
+        return noTextManhandle? str : str.replace(/^\s+/, ' ').replace(/\s+$/, ' ');
     }
 
     function clear_stack_to_table_context() {
@@ -400,7 +404,7 @@ var htmlPurifier = function(settings){
         if (typeof(text) === 'undefined') {
             return;
         }
-        text = text.replace(/\n\s*\n\s*\n*/g, '\n\n').replace(/(^\n\n|\n\n$)/g, '');
+        text = noTextManhandle? text : text.replace(/\n\s*\n\s*\n*/g, '\n\n').replace(/(^\n\n|\n\n$)/g, '');
         var paragraphs = text.split('\n\n');
         var trimmedText;
         if (paragraphs.length > 1) {
@@ -1044,7 +1048,7 @@ var htmlPurifier = function(settings){
         end: end,
         chars: chars,
         getResult: function(){
-            return root.innerHTML().replace(/^\s+/, '');
+            return noTextManhandle? root.innerHTML() : root.innerHTML().replace(/^\s+/, '');
         }
     };
 

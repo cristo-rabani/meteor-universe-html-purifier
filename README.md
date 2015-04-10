@@ -49,6 +49,7 @@ Additionally you can pass settings as a second parameter of method `UniHTML.puri
 - **withoutTags** - An array of skipped tags, (which were before added, including defaults).
   Warning: Parameter 'withoutTags' works only for global tags.
   You cannot skipped local table tags like example: `<tr>`, `<caption>`, `<td>`
+- **noTextManhandle** skipping text processing like clearing whitespace and no formatting
 - **catchErrors** - ignoring errors (like not closed tags)
 
 ### Example
