@@ -5,11 +5,11 @@ Package.describe({
     git: 'https://github.com/cristo-rabani/meteor-universe-html-purifier.git'
 });
 
-Package.on_use(function (api) {
+Package.onUse(function (api) {
     api.use([
         'underscore@1.0.1'
     ]);
-    api.add_files([
+    api.addFiles([
         'HTMLParser.js',
         'HTMLPurifier.js'
     ]);
