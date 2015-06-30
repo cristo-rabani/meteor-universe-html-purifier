@@ -97,6 +97,8 @@ is very important to pass true as second argument if tag is self-closing.
 You can also skipped default allowed tags for current call purify,
 but only global tags (top level). It mean that you cannot skipped `<td>` or `<tr>` for `<table>`
 
+As a default attribute href of tag 'a' has a restrictions for allowed urls
+
 ## Default allowed attributes
 
 - all_elements: ['class', 'style', 'id']
