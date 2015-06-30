@@ -99,6 +99,10 @@ but only global tags (top level). It mean that you cannot skipped `<td>` or `<tr
 
 As a default attribute href of tag 'a' has a restrictions for allowed urls
 
+- supported protocols: http, https, sftp, ftp, ftps, mailto
+- link to an element with a specified id within the page (like href="#top")
+- A relative URL from site root (like href="/default") but without chars: ":",  "\\",  ";",  "(",  ")"
+
 ## Default allowed attributes
 
 - all_elements: ['class', 'style', 'id']
