@@ -6,6 +6,7 @@ var htmlPurifier = function(settings){
     var active_elements = [];
     var customTags = {};
     var noTextManhandle = false;
+    var encodeHtmlEntities = false;
     var root;
     var insertion_mode;
     var noFormatting;
@@ -233,6 +234,7 @@ var htmlPurifier = function(settings){
             noTextManhandle = true;
             noFormatting = true;
         }
+        encodeHtmlEntities = settings.encodeHtmlEntities;
         preferStrong_Em = !!settings.preferStrong_Em;
         preferB_I = !preferStrong_Em && !!settings.preferB_I;
         allowHeaders = !settings.noHeaders;
@@ -405,6 +407,7 @@ var htmlPurifier = function(settings){
             return;
         }
         text = noTextManhandle? text : text.replace(/\n\s*\n\s*\n*/g, '\n\n').replace(/(^\n\n|\n\n$)/g, '');
+        text = !encodeHtmlEntities? text : text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         var paragraphs = text.split('\n\n');
         var trimmedText;
         if (paragraphs.length > 1) {
@@ -1092,7 +1095,6 @@ UniHTML = {
             selfClosingTags: selfClosing
         }, settings);
         var purifierInstance = htmlPurifier(settings);
-
         try {
             HTMLParser(html, {
                 start: purifierInstance.start,

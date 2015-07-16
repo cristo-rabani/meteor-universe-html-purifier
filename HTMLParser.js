@@ -129,7 +129,7 @@ HTMLParser = function( html, handler ) {
 				}
 
 			// start tag
-			} else if ( html.indexOf("<") === 0 ) {
+			} else if ( html.indexOf("<") === 0 && !/^(<)[^>]*(?:<|$)/gm.test(html)) {
 				match = html.match( startTag );
 
 				if ( match ) {
@@ -141,7 +141,9 @@ HTMLParser = function( html, handler ) {
 
 			if ( chars ) {
 				index = html.indexOf("<");
-
+				if(/(<)[^>]*(?:<|$)/gm.test(html)){
+					index = html.search(/(<)[^>]*(?:<|$)/gm)+1;
+				}
 				var text = index < 0 ? html : html.substring( 0, index );
 				html = index < 0 ? "" : html.substring( index );
 
