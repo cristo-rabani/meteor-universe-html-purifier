@@ -317,7 +317,11 @@ var htmlPurifier = function(settings){
     }
 
     function trim_to_1_space(str) {
-        return noTextManhandle? str : str.replace(/^\s+/, ' ').replace(/\s+$/, ' ');
+        if(typeof str === 'string') {
+            return noTextManhandle ? str : str.replace(/^\s+/, ' ').replace(/\s+$/, ' ');
+        }else{
+            return '';
+        }
     }
 
     function clear_stack_to_table_context() {
