@@ -22,7 +22,7 @@ var htmlPurifier = function(settings){
         a: ['href', 'target', 'title', 'name', 'rel', 'rev', 'type'],
         blockquote: ['cite'],
         img: ['src', 'alt', 'title', 'longdesc'],
-        td: ['colspan'],
+        td: ['colspan', 'rowspan'],
         th: ['colspan'],
         tr: ['rowspan'],
         table: ['border']
