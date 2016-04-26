@@ -105,7 +105,7 @@ As a default attribute href of tag 'a' has a restrictions for allowed urls
 - a: ['href', 'target', 'title', 'name', 'rel', 'rev', 'type']
 - blockquote: ['cite']
 - img: ['src', 'alt', 'title', 'longdesc']
-- td: ['colspan']
+- td: ['colspan', 'rowspan']
 - th: ['colspan']
 - tr: ['rowspan']
 - table: ['border']
