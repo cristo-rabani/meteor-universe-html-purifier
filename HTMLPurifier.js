@@ -124,7 +124,7 @@ var htmlPurifier = function(settings){
                     if (name === 'href') {
                         // don't allow links to anywhere other than http(s)
                         // because they could contain JavaScript (javascript:) or other bad things!
-                        var permittedRegex = /(?:^https?:\/\/)|(?:^\/[^:\\;\(\)"']*$)|(?:^s?ftps?:\/\/)|(?:^#[^\/]*)|(?:^mailto:)/i;
+                        var permittedRegex = /(?:^https?:\/\/)|(?:^\/[^:\\;\(\)"']*$)|(?:^s?ftps?:\/\/)|(?:^#[^\/]*)|(?:^mailto:)|(?:^tel:)/i;
                         if (!permittedRegex.test(value) || /script:/.test(value)) {
                             // if not allowed, set the attribute to be empty
                             value = '';
